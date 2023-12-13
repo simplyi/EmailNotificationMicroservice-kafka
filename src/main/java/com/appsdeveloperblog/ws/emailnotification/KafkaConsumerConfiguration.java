@@ -10,9 +10,12 @@ import org.springframework.kafka.core.ConsumerFactory;
 import java.util.Map;
 import java.util.HashMap;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 
 @Configuration
 public class KafkaConsumerConfiguration {
@@ -37,10 +40,13 @@ public class KafkaConsumerConfiguration {
 
 	@Bean
 	ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
-			ConsumerFactory<String, Object> consumerFactory) {
+			ConsumerFactory<String, Object> consumerFactory, KafkaTemplate<String, Object> kafkaTemplate) {
+		
+		DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate));
 
 		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory);
+		factory.setCommonErrorHandler(errorHandler);
 		
 		return factory;
 	}
