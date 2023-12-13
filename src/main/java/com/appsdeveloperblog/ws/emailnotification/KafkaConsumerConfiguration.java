@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 
 @Configuration
 public class KafkaConsumerConfiguration {
@@ -25,7 +26,8 @@ public class KafkaConsumerConfiguration {
 		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
 				environment.getProperty("spring.kafka.consumer.bootstrap-servers"));
 		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+		config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
 		config.put(JsonDeserializer.TRUSTED_PACKAGES,
 				environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
 		config.put(ConsumerConfig.GROUP_ID_CONFIG, environment.getProperty("spring.kafka.consumer.group-id"));
