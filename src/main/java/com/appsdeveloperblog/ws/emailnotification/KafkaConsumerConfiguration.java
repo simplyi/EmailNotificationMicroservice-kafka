@@ -21,6 +21,9 @@ import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.web.client.HttpServerErrorException;
+
+import com.appsdeveloperblog.ws.emailnotification.error.NotRetryableException;
 
 @Configuration
 public class KafkaConsumerConfiguration {
@@ -48,6 +51,7 @@ public class KafkaConsumerConfiguration {
 			ConsumerFactory<String, Object> consumerFactory, KafkaTemplate<String, Object> kafkaTemplate) {
 		
 		DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate));
+		errorHandler.addNotRetryableExceptions(NotRetryableException.class);
 
 		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory);
