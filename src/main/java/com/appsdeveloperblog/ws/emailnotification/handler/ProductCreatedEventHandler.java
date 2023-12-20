@@ -29,7 +29,8 @@ public class ProductCreatedEventHandler {
 
 	@KafkaHandler
 	public void handle(ProductCreatedEvent productCreatedEvent) {
-		LOGGER.info("Received a new event: " + productCreatedEvent.getTitle());
+		LOGGER.info("Received a new event: " + productCreatedEvent.getTitle() + " with productId: "
+				+ productCreatedEvent.getProductId());
 
 		String requestUrl = "http://localhost:8082/response/200";
 
@@ -42,10 +43,10 @@ public class ProductCreatedEventHandler {
 		} catch (ResourceAccessException ex) {
 			LOGGER.error(ex.getMessage());
 			throw new RetryableException(ex);
-		} catch(HttpServerErrorException ex) {
+		} catch (HttpServerErrorException ex) {
 			LOGGER.error(ex.getMessage());
 			throw new NotRetryableException(ex);
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
 			throw new NotRetryableException(ex);
 		}
