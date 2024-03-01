@@ -28,8 +28,7 @@ public class ProcessedEventEntity implements Serializable {
 	public ProcessedEventEntity() {
 	}
 
-	public ProcessedEventEntity(long id, String messageId, String productId) {
-		this.id = id;
+	public ProcessedEventEntity(String messageId, String productId) {
 		this.messageId = messageId;
 		this.productId = productId;
 	}
